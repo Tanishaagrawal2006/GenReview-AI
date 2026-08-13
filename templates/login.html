@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="auth-layout">
+
+    <!-- Left Navy Panel -->
+    <div class="auth-left">
+        <div>
+            <div class="flex items-center gap-3 mb-12">
+                <div class="sidebar-logo-mark">R</div>
+                <div>
+                    <div class="sidebar-brand" style="font-size:16px;">ReviewFlow AI</div>
+                    <div class="sidebar-tagline">Enterprise Platform</div>
+                </div>
+            </div>
+
+            <h1 style="color:white;font-size:28px;font-weight:800;line-height:1.2;letter-spacing:-0.03em;margin-bottom:16px;">
+                Reputation Intelligence<br>for Modern Businesses
+            </h1>
+            <p style="color:rgba(255,255,255,0.5);font-size:14px;line-height:1.7;">
+                AI-powered review generation, private feedback capture, and real-time reputation analytics in one enterprise platform.
+            </p>
+        </div>
+
+        <!-- Stats -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;position:relative;overflow:hidden;">
+                <svg style="position:absolute;right:-10px;bottom:-10px;opacity:0.05;color:white;" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <div style="display:flex;align-items:center;gap:8px;color:var(--teal-500);font-size:22px;font-weight:800;">
+                    4.9★
+                </div>
+                <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Avg Platform Rating
+                </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;position:relative;overflow:hidden;">
+                <svg style="position:absolute;right:-10px;bottom:-10px;opacity:0.05;color:white;" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div style="display:flex;align-items:center;gap:8px;color:var(--teal-500);font-size:22px;font-weight:800;">
+                    98%
+                </div>
+                <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    Promoter Conversion
+                </div>
+            </div>
+        </div>
+
+        <div style="color:rgba(255,255,255,0.2);font-size:11px;">
+            &copy; 2026 Digital Byte Solutions. All rights reserved.
+        </div>
+    </div>
+
+    <!-- Right White Panel -->
+    <div class="auth-right">
+        <div class="auth-form-box">
+            <div style="margin-bottom:32px;">
+                <div style="display:inline-flex;align-items:center;gap:6px;background:var(--teal-100);color:var(--teal-600);font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">
+                    <span style="width:6px;height:6px;background:var(--teal-500);border-radius:50%;"></span>
+                    Secure Login
+                </div>
+                <h2 style="font-size:26px;font-weight:800;color:var(--slate-900);letter-spacing:-0.03em;margin:0 0 6px;">Welcome back</h2>
+                <p style="font-size:14px;color:var(--slate-500);margin:0;">Sign in to your management console.</p>
+            </div>
+
+            <form action="/login" method="POST" style="display:flex;flex-direction:column;gap:20px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <div>
+                    <label class="form-label" for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" required
+                           placeholder="e.g. dbs_admin or owner_1"
+                           class="input-field">
+                </div>
+
+                <div>
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required
+                           placeholder="••••••••"
+                           class="input-field" style="letter-spacing:0.15em;">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:13px 20px;font-size:14px;margin-top:4px;">
+                    Sign In
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </form>
+
+            <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--slate-200);text-align:center;">
+                <a href="/register_portal" style="font-size:13px;color:var(--slate-500);text-decoration:none;font-weight:500;">
+                    Register a new business &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

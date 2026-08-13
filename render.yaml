@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: reviewflow-app
+    env: python
+    buildCommand: "npx -y tailwindcss@3 -c tailwind.config.js -i input.css -o static/css/output.css --minify && pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: GROQ_API_KEY
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: DATABASE_URL
+        sync: false

@@ -1,0 +1,6 @@
+# reviewflow_app/.gitignore
+.env
+__pycache__/
+*.db
+instance/
+static/qr_codes/

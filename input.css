@@ -1,0 +1,9 @@
+/* Tailwind CSS entry-point for ReviewFlow.
+   Build command (from reviewflow_app/ directory):
+     npx tailwindcss -c tailwind.config.js -i input.css -o static/css/output.css --minify
+
+   Re-run this whenever you add new Tailwind utility classes to a template.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

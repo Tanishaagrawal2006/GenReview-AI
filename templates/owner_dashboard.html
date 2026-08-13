@@ -1,0 +1,429 @@
+{% set low_count = feedbacks | selectattr('overall_rating', 'le', 3) | rejectattr('status', 'equalto', 'Resolved') | list | length %}
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="flex items-center gap-3">
+            <div class="sidebar-logo-mark">R</div>
+            <div>
+                <div class="sidebar-brand">ReviewFlow AI</div>
+                <div class="sidebar-tagline">Owner Console</div>
+            </div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Analytics</div>
+        <a href="#overview" class="nav-item active" onclick="scrollToSection('overview')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Overview
+        </a>
+        <a href="#funnel" class="nav-item" onclick="scrollToSection('funnel')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Funnel
+        </a>
+        <a href="#feedback" class="nav-item" onclick="scrollToSection('feedback')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Feedback
+            {% if low_count > 0 %}<span style="background:#ef4444;color:white;font-size:10px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:auto;">{{ low_count }}</span>{% endif %}
+        </a>
+        <div class="nav-section-label" style="margin-top:20px;">Management</div>
+        <a href="#knowledge" class="nav-item" onclick="scrollToSection('knowledge')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Knowledge Base
+        </a>
+        <a href="#qr" class="nav-item" onclick="scrollToSection('qr')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M17 14h3M14 17h3"/></svg>
+            QR Manager
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div style="padding:0 8px 12px;">
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;">Business</div>
+            <div style="color:white;font-size:13px;font-weight:600;">{{ business.name }}</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;margin-top:2px;">{{ business.category }}</div>
+        </div>
+        <a href="/logout" class="nav-item" style="color:rgba(255,255,255,0.5);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+        </a>
+    </div>
+</aside>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar">
+    <div>
+        <div class="top-bar-title">Reputation Analytics</div>
+        <div class="top-bar-subtitle">{{ business.name }} &mdash; {{ business.category }}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <!-- Alert Bell -->
+        <div style="position:relative;">
+            <button onclick="toggleAlertDropdown()" style="position:relative;background:none;border:none;cursor:pointer;padding:8px;border-radius:8px;color:var(--slate-500);" title="Alerts">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                {% if unread_alerts | length > 0 %}
+                <span id="alert_badge" style="position:absolute;top:4px;right:4px;width:16px;height:16px;background:#ef4444;border:2px solid white;border-radius:50%;font-size:9px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;">{{ unread_alerts|length }}</span>
+                {% endif %}
+            </button>
+            <div id="notification_tray" style="display:none;position:absolute;right:0;top:calc(100% + 8px);width:300px;background:white;border:1px solid var(--slate-200);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:100;overflow:hidden;">
+                <div style="padding:12px 16px;border-bottom:1px solid var(--slate-100);display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:12px;font-weight:700;color:var(--slate-700);">Active Alerts</span>
+                    {% if unread_alerts|length > 0 %}
+                    <button onclick="flushActiveAlerts()" style="font-size:11px;color:var(--slate-400);background:none;border:none;cursor:pointer;font-weight:600;">Clear all</button>
+                    {% endif %}
+                </div>
+                <div style="max-height:240px;overflow-y:auto;">
+                    {% if unread_alerts|length == 0 %}
+                    <p style="text-align:center;padding:24px 16px;font-size:12px;color:var(--slate-400);">No active alerts.</p>
+                    {% else %}
+                        {% for alert in unread_alerts %}
+                        <div style="padding:12px 16px;border-bottom:1px solid var(--slate-100);">
+                            <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#dc2626;">
+                                <span>{{ alert.overall_rating }} ★ — Low Rating</span>
+                            </div>
+                            <p style="font-size:11px;color:var(--slate-500);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">"{{ alert.complaint_text or 'No text provided' }}"</p>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <span class="badge badge-teal">Tenant Admin</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="overview" style="display:flex;flex-direction:column;gap:28px;">
+
+    <!-- Alert Banner -->
+    {% if low_count > 0 %}
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-left:4px solid #ef4444;border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px;">
+        <span style="width:8px;height:8px;background:#ef4444;border-radius:50%;flex-shrink:0;"></span>
+        <span style="font-size:13px;color:#7f1d1d;font-weight:500;">
+            <strong>{{ low_count }} unresolved</strong> private feedback entries require your attention.
+        </span>
+    </div>
+    {% endif %}
+
+    <!-- Stat Cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#eff6ff;">📊</div>
+            <div class="stat-label">Total Scans</div>
+            <div class="stat-value" style="color:var(--navy-900);">{{ total }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fefce8;">⭐</div>
+            <div class="stat-label">Avg Rating</div>
+            <div class="stat-value" style="color:#ca8a04;">{{ avg }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#f0fdf4;">🎉</div>
+            <div class="stat-label">Promoters</div>
+            <div class="stat-value" style="color:#16a34a;">{{ promoters }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fef2f2;">⚠️</div>
+            <div class="stat-label">Detractors</div>
+            <div class="stat-value" style="color:#dc2626;">{{ detractors }}</div>
+        </div>
+    </div>
+
+    <!-- Conversion Funnel & Keywords -->
+    <div id="funnel" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <!-- Funnel -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Conversion Funnel</div>
+                    <div class="card-subtitle">QR scan to Google Maps redirect</div>
+                </div>
+            </div>
+            <div style="padding:24px;display:flex;flex-direction:column;gap:20px;">
+                {% set calculated_rate = ((promoters / total) * 100) | round if total > 0 else 0 %}
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--slate-700);margin-bottom:8px;">
+                        <span>QR Scans</span><span>100%</span>
+                    </div>
+                    <div style="height:8px;background:var(--slate-100);border-radius:999px;overflow:hidden;">
+                        <div class="progress-bar-inner" style="height:100%;width:100%;background:var(--navy-900);border-radius:999px;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--slate-700);margin-bottom:8px;">
+                        <span>Google Maps Redirects</span>
+                        <span style="color:#16a34a;">{{ calculated_rate }}%</span>
+                    </div>
+                    <div style="height:8px;background:var(--slate-100);border-radius:999px;overflow:hidden;">
+                        <div id="conversion_progress_bar" data-rate="{{ calculated_rate }}" class="progress-bar-inner" style="height:100%;width:0%;background:#22c55e;border-radius:999px;transition:width 1s ease;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyword Tags -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Detractor Keyword Themes</div>
+                    <div class="card-subtitle">Auto-grouped from private feedback</div>
+                </div>
+            </div>
+            <div style="padding:20px;display:flex;flex-wrap:wrap;gap:8px;">
+                <span class="badge badge-red" style="font-size:11px;padding:5px 12px;">Wait Pacing</span>
+                <span class="badge badge-red" style="font-size:11px;padding:5px 12px;">Staff Attentiveness</span>
+                <span class="badge badge-red" style="font-size:11px;padding:5px 12px;">Hygiene Standard</span>
+                <span class="badge badge-red" style="font-size:11px;padding:5px 12px;">Invoicing</span>
+                <p style="width:100%;font-size:12px;color:var(--slate-400);margin-top:8px;font-style:italic;">Keywords auto-clustered from private feedback streams.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Knowledge Base -->
+    <div id="knowledge" class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">AI Knowledge Base (RAG)</div>
+                <div class="card-subtitle">Add context to improve AI-generated review drafts</div>
+            </div>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;gap:12px;align-items:flex-end;">
+                <div style="flex:0 0 180px;">
+                    <label class="form-label">Source Type</label>
+                    <div style="position:relative;">
+                        <select id="kb_source_type" class="input-field" style="appearance:none;">
+                            <option value="branding">Branding Guidelines</option>
+                            <option value="catalogue">Product / Service Catalogue</option>
+                            <option value="faq">FAQ</option>
+                            <option value="template">Review Template</option>
+                        </select>
+                        <svg style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                </div>
+                <div style="flex:1;">
+                    <label class="form-label">Content</label>
+                    <input type="text" id="kb_content" placeholder="e.g. Our brand tone is upbeat and professional..." class="input-field">
+                </div>
+                <button onclick="addKnowledge()" class="btn-teal" style="flex-shrink:0;white-space:nowrap;">Add Entry</button>
+            </div>
+            <div style="border:1px solid var(--slate-200);border-radius:8px;overflow:hidden;">
+                <table class="data-table">
+                    <thead><tr>
+                        <th>Source Type</th><th>Content</th><th style="width:60px;text-align:center;">Delete</th>
+                    </tr></thead>
+                    <tbody>
+                        {% for k in knowledge %}
+                        <tr>
+                            <td><span class="badge badge-teal">{{ k.source_type }}</span></td>
+                            <td style="max-width:400px;white-space:pre-wrap;word-break:break-word;">{{ k.content }}</td>
+                            <td style="text-align:center;">
+                                <button onclick="deleteKnowledge({{ k.id }})" style="background:none;border:none;cursor:pointer;color:#94a3b8;padding:4px;" title="Delete">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" style="text-align:center;color:var(--slate-400);font-style:italic;padding:24px;">No knowledge entries yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Manager -->
+    <div id="qr" class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">QR Asset Manager</div>
+                <div class="card-subtitle">Download and distribute your branded QR flyer</div>
+            </div>
+            <a href="/static/qr_codes/tenant_{{ business.id }}.png"
+               download="ReviewFlow_QR_{{ business.name }}.png"
+               class="btn-primary" style="text-decoration:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download QR Code
+            </a>
+        </div>
+        <div style="padding:24px;display:flex;align-items:center;gap:24px;">
+            <div style="width:110px;height:110px;border:1px solid var(--slate-200);border-radius:12px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--slate-50);">
+                <img src="/static/qr_codes/tenant_{{ business.id }}.png" alt="QR Code" style="width:100%;height:100%;object-fit:contain;">
+            </div>
+            <div>
+                <div style="font-size:13px;color:var(--slate-700);display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <strong>Category:</strong> <span class="badge badge-blue">{{ business.category }}</span>
+                </div>
+                <p style="font-size:13px;color:var(--slate-500);line-height:1.6;max-width:480px;">This QR code routes customers to your AI-powered review experience. Place it on tables, flyers, or at your checkout. Download fresh copies after any URL changes.</p>
+                <div style="margin-top:10px;font-size:12px;color:var(--slate-400);">
+                    Place ID: <span style="font-family:monospace;color:var(--slate-700);">{{ business.place_id }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Feedback Feed -->
+    <div id="feedback" class="card" style="overflow:hidden;">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Live Feedback Stream</div>
+                <div class="card-subtitle">All customer interactions in real time</div>
+            </div>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="data-table" style="white-space:nowrap;">
+                <thead><tr>
+                    <th>Sentiment</th>
+                    <th>Shortfall Area</th>
+                    <th style="min-width:260px;">Feedback / Review Copy</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Visible</th>
+                    <th>Timestamp</th>
+                </tr></thead>
+                <tbody>
+                    {% for f in feedbacks %}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span class="rating-badge {% if f.overall_rating < business.threshold %}style='color:#dc2626;'{% endif %}">
+                                    {{ f.overall_rating }} ★
+                                </span>
+                                <span class="badge {% if f.overall_rating >= business.threshold %}badge-green{% else %}badge-red{% endif %}">
+                                    {% if f.overall_rating >= business.threshold %}Promoter{% else %}Detractor{% endif %}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if f.improvement_tags %}
+                            <span class="badge badge-slate">{{ f.improvement_tags }}</span>
+                            {% else %}
+                            <span style="color:var(--slate-300);font-style:italic;">—</span>
+                            {% endif %}
+                        </td>
+                        <td style="max-width:280px;white-space:normal;">
+                            {% if f.complaint_text %}
+                            <span style="font-size:12px;color:#7f1d1d;background:#fef2f2;border:1px solid #fecaca;border-left:3px solid #ef4444;padding:8px 10px;border-radius:6px;display:block;">{{ f.complaint_text }}</span>
+                            {% elif f.selected_draft_text %}
+                            <span style="font-size:12px;color:#14532d;background:#f0fdf4;border:1px solid #bbf7d0;border-left:3px solid #22c55e;padding:8px 10px;border-radius:6px;display:block;">"{{ f.selected_draft_text }}"</span>
+                            {% else %}
+                            <span style="font-size:12px;color:var(--slate-400);font-style:italic;">Redirected to Google Maps</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-family:monospace;font-size:12px;">{{ f.customer_contact if f.customer_contact else 'Anonymous' }}</td>
+                        <td>
+                            <div style="position:relative;display:inline-block;">
+                                <select data-record-id="{{ f.id }}" onchange="handleStatusChange(this)" class="status-select">
+                                    <option value="New" {% if f.status == 'New' %}selected{% endif %}>New</option>
+                                    <option value="In Progress" {% if f.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                    <option value="Resolved" {% if f.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                </select>
+                                <svg style="position:absolute;right:6px;top:50%;transform:translateY(-50%);pointer-events:none;" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                        </td>
+                        <td>
+                            <button id="vis_btn_{{ f.id }}" class="vis-toggle"
+                                    data-visible="{{ f.is_visible if f.is_visible is not none else 1 }}"
+                                    onclick="toggleVisibility(this, {{ f.id }})"
+                                    title="Toggle profile visibility">
+                                <span class="vis-toggle-knob"></span>
+                            </button>
+                        </td>
+                        <td style="font-family:monospace;font-size:11px;color:var(--slate-400);">{{ f.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(() => {
+            const bar = document.getElementById("conversion_progress_bar");
+            if (bar) bar.style.width = bar.getAttribute("data-rate") + "%";
+        }, 300);
+    });
+
+    function scrollToSection(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        // update active state
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    function toggleAlertDropdown() {
+        const tray = document.getElementById("notification_tray");
+        tray.style.display = tray.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function flushActiveAlerts() {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const res = await fetch('/owner/clear_alerts', { method: 'POST', headers: { 'X-CSRFToken': csrfToken } });
+        if ((await res.json()).success) location.reload();
+    }
+
+    async function handleStatusChange(sel) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        await fetch('/owner/update_status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ id: sel.getAttribute("data-record-id"), status: sel.value })
+        });
+        setTimeout(() => location.reload(), 200);
+    }
+
+    async function toggleVisibility(btn, id) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const res = await fetch('/owner/toggle_visibility', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (data.success) btn.setAttribute('data-visible', data.is_visible);
+    }
+
+    async function addKnowledge() {
+        const type = document.getElementById("kb_source_type").value;
+        const content = document.getElementById("kb_content").value.trim();
+        if (!content) return;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const res = await fetch('/owner/knowledge/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+            body: JSON.stringify({ source_type: type, content })
+        });
+        if ((await res.json()).success) location.reload();
+    }
+
+    async function deleteKnowledge(id) {
+        const result = await Swal.fire({
+            title: 'Delete entry?', text: 'This cannot be undone.',
+            icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#0f2045', cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Delete'
+        });
+        if (result.isConfirmed) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const res = await fetch('/owner/knowledge/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+                body: JSON.stringify({ id })
+            });
+            if ((await res.json()).success) location.reload();
+        }
+    }
+</script>
+{% endblock %}

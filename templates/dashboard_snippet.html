@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Registered — ReviewFlow AI</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230f2045'/><rect x='20' y='20' width='60' height='60' rx='12' fill='%230891b2'/><text y='72' x='50' text-anchor='middle' font-size='52' font-family='Inter,sans-serif' font-weight='900' fill='white'>R</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; min-height: 100vh; }
+        .top-bar { background: #0f2045; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+        .logo-mark { width: 32px; height: 32px; background: #0891b2; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; flex-shrink: 0; }
+        .main { max-width: 860px; margin: 0 auto; padding: 36px 20px; display: flex; flex-direction: column; gap: 20px; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; }
+        .card-header { padding: 18px 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .success-banner { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px 22px; display: flex; align-items: center; gap: 14px; }
+        .check-icon { width: 40px; height: 40px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .cred-box { background: #0f2045; border-radius: 12px; padding: 22px; color: white; }
+        .cred-value { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 14px 16px; font-family: monospace; font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .cred-value span { color: #fbbf24; font-weight: 700; letter-spacing: 0.03em; }
+        .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 999px; }
+        .badge-teal { background: #f0fdff; color: #0e7490; border: 1px solid #a5f3fc; }
+        .badge-navy { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 8px; text-decoration: none; border: none; cursor: pointer; transition: all 0.15s; }
+        .btn-primary { background: #0f2045; color: white; }
+        .btn-primary:hover { background: #1a3263; }
+        .btn-outline { background: white; color: #334155; border: 1px solid #e2e8f0; }
+        .btn-outline:hover { background: #f8fafc; }
+        .info-row { display: flex; gap: 6px; align-items: center; font-size: 13px; color: #475569; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { font-weight: 600; color: #0f172a; min-width: 120px; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo-mark">R</div>
+        <div>
+            <div style="color:white;font-size:14px;font-weight:700;">ReviewFlow AI</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;">Business Onboarding</div>
+        </div>
+        <div style="margin-left:auto;">
+            <a href="/" class="btn btn-outline" style="font-size:12px;padding:7px 14px;">Return to Login →</a>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <!-- Success Banner -->
+        <div class="success-banner">
+            <div class="check-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+                <div style="font-size:15px;font-weight:800;color:#14532d;">{{ name }} successfully registered!</div>
+                <div style="font-size:13px;color:#166534;margin-top:2px;">Your QR code is ready. Save your credentials below before navigating away.</div>
+            </div>
+        </div>
+
+        <div class="grid">
+
+            <!-- Credentials -->
+            <div class="cred-box">
+                <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Admin Login Credentials</div>
+                <div class="cred-value">
+                    <div style="color:rgba(255,255,255,0.5);font-size:11px;">USERNAME</div>
+                    <span class="select-all">{{ g_user }}</span>
+                </div>
+                <div class="cred-value">
+                    <div style="color:rgba(255,255,255,0.5);font-size:11px;">PASSWORD</div>
+                    <span class="select-all">{{ g_pass }}</span>
+                </div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:10px;font-style:italic;">⚠️ Copy and save these now. They are shown only once.</div>
+                <a href="/" class="btn btn-outline" style="margin-top:16px;width:100%;justify-content:center;">Go to Login →</a>
+            </div>
+
+            <!-- QR Code -->
+            <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;">
+                <img src="/static/qr_codes/{{ qr_filename }}" alt="QR Code" style="width:240px;height:240px;border:1px solid #e2e8f0;border-radius:10px;padding:6px;object-fit:contain;">
+                <div style="text-align:center;">
+                    <div style="font-size:15px;font-weight:700;color:#0f172a;">{{ name }}</div>
+                    <span class="badge badge-teal" style="margin-top:6px;">{{ display_category }}</span>
+                </div>
+                <a href="/review/{{ business_id }}" target="_blank" class="btn btn-outline" style="font-size:12px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Preview Review Page
+                </a>
+            </div>
+        </div>
+
+        <!-- Business Summary -->
+        <div class="card">
+            <div class="card-header">
+                <div style="font-size:14px;font-weight:700;">Business Configuration Summary</div>
+            </div>
+            <div style="padding:20px;">
+                <div class="info-row"><span class="info-label">Business ID</span> #{{ business_id }}</div>
+                <div class="info-row"><span class="info-label">Category</span> <span class="badge badge-navy">{{ display_category }}</span></div>
+                <div class="info-row"><span class="info-label">Google Place ID</span> <span style="font-family:monospace;font-size:12px;color:#64748b;">{{ place_id }}</span></div>
+                <div class="info-row"><span class="info-label">Rating Threshold</span> {{ threshold }} ★ (redirect to Google Maps)</div>
+                <div class="info-row"><span class="info-label">Primary Contact</span> {{ primary_alert }}</div>
+                <div class="info-row"><span class="info-label">Owner Email</span> {{ backup_email_display }}</div>
+                {% if alternate_alert %}
+                <div class="info-row"><span class="info-label">Alternate Contact</span> {{ alternate_alert }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

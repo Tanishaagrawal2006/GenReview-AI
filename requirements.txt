@@ -1,0 +1,14 @@
+flask
+psycopg2-binary
+werkzeug
+flask-wtf
+flask-limiter
+python-dotenv
+groq
+qrcode
+Pillow
+pandas
+nltk
+joblib
+scikit-learn
+gunicorn

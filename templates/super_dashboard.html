@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="flex items-center gap-3">
+            <div class="sidebar-logo-mark">R</div>
+            <div>
+                <div class="sidebar-brand">ReviewFlow AI</div>
+                <div class="sidebar-tagline">Super Admin</div>
+            </div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Platform</div>
+        <a href="#overview" class="nav-item active">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Global Overview
+        </a>
+        <a href="#clients" class="nav-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Clients
+        </a>
+        <a href="#telemetry" class="nav-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Telemetry
+        </a>
+        <div class="nav-section-label" style="margin-top:20px;">Admin</div>
+        <a href="/register_portal" class="nav-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Business
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div style="padding:0 8px 12px;">
+            <div style="color:white;font-size:13px;font-weight:600;">DBS Admin</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;">Super Administrator</div>
+        </div>
+        <a href="/logout" class="nav-item" style="color:rgba(255,255,255,0.5);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+        </a>
+    </div>
+</aside>
+{% endblock %}
+
+{% block topbar %}
+<div class="top-bar">
+    <div>
+        <div class="top-bar-title">Corporate Matrix</div>
+        <div class="top-bar-subtitle">Enterprise Reputation Network &mdash; Super Admin View</div>
+    </div>
+    <span class="badge badge-blue">Super Admin</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="overview" style="display:flex;flex-direction:column;gap:28px;">
+
+    <!-- Stat Cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#eff6ff;">🏢</div>
+            <div class="stat-label">Total Clients</div>
+            <div class="stat-value" style="color:var(--navy-900);">{{ clients }}</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--slate-400);">Deployed organizations</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#f0fdff;">📈</div>
+            <div class="stat-label">Feedback Logs</div>
+            <div class="stat-value" style="color:var(--teal-600);">{{ logs }}</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--slate-400);">Interactions processed</div>
+        </div>
+    </div>
+
+    <!-- Clients Table -->
+    <div id="clients" class="card" style="overflow:hidden;">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Deployed Client Organizations</div>
+                <div class="card-subtitle">All active business tenants on the network</div>
+            </div>
+            <a href="/register_portal" class="btn-primary" style="text-decoration:none;font-size:12px;padding:8px 16px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Client
+            </a>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="data-table">
+                <thead><tr>
+                    <th>ID</th>
+                    <th>Business Name</th>
+                    <th>Category</th>
+                    <th>Total Feedback</th>
+                    <th>Avg Rating</th>
+                </tr></thead>
+                <tbody>
+                    {% for s in shops %}
+                    <tr>
+                        <td style="font-family:monospace;color:var(--slate-400);font-size:11px;">#{{ '%04d' % s.id }}</td>
+                        <td style="font-weight:600;color:var(--slate-900);">{{ s.name }}</td>
+                        <td><span class="badge badge-slate">{{ s.category }}</span></td>
+                        <td style="font-family:monospace;">{{ s.total_scans }}</td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:6px;font-weight:700;">
+                                <span style="color:#ca8a04;">★</span>
+                                {{ s.platform_avg|round(2) if s.platform_avg else '—' }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Global Telemetry -->
+    <div id="telemetry" class="card" style="overflow:hidden;">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Global Telemetry Stream</div>
+                <div class="card-subtitle">Last 50 interactions across all tenants</div>
+            </div>
+            <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--slate-400);">
+                <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite;"></span>
+                Live
+            </span>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="data-table" style="white-space:nowrap;">
+                <thead><tr>
+                    <th>Business</th>
+                    <th>Rating</th>
+                    <th style="min-width:260px;">Feedback</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                </tr></thead>
+                <tbody>
+                    {% for log in master_stream %}
+                    <tr>
+                        <td style="font-weight:600;">{{ log.business_name }}</td>
+                        <td>
+                            <span class="badge {% if log.overall_rating < 4 %}badge-red{% else %}badge-green{% endif %}">
+                                {{ log.overall_rating }} ★
+                            </span>
+                        </td>
+                        <td style="max-width:280px;white-space:normal;">
+                            {% if log.complaint_text %}
+                            <span style="font-size:12px;color:#7f1d1d;background:#fef2f2;border:1px solid #fecaca;border-left:3px solid #ef4444;padding:6px 10px;border-radius:6px;display:block;">"{{ log.complaint_text }}"</span>
+                            {% elif log.selected_draft_text %}
+                            <span style="font-size:12px;color:#14532d;background:#f0fdf4;border:1px solid #bbf7d0;border-left:3px solid #22c55e;padding:6px 10px;border-radius:6px;display:block;">"{{ log.selected_draft_text }}"</span>
+                            {% else %}
+                            <span style="font-size:12px;color:var(--slate-400);font-style:italic;">Direct Google Maps redirect</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-family:monospace;font-size:11px;">{{ log.customer_contact if log.customer_contact else 'Anonymous' }}</td>
+                        <td>
+                            <span class="badge {% if log.status == 'New' %}badge-red{% elif log.status == 'In Progress' %}badge-yellow{% else %}badge-green{% endif %}">
+                                {{ log.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

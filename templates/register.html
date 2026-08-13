@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="auth-layout">
+
+    <!-- Left Navy Panel -->
+    <div class="auth-left">
+        <div>
+            <div class="flex items-center gap-3 mb-12">
+                <div class="sidebar-logo-mark">R</div>
+                <div>
+                    <div class="sidebar-brand" style="font-size:16px;">ReviewFlow AI</div>
+                    <div class="sidebar-tagline">Enterprise Platform</div>
+                </div>
+            </div>
+            <h1 style="color:white;font-size:26px;font-weight:800;line-height:1.3;letter-spacing:-0.02em;margin-bottom:14px;">
+                Launch Your Business on the ReviewFlow Network
+            </h1>
+            <p style="color:rgba(255,255,255,0.5);font-size:13px;line-height:1.7;">
+                Register your business profile and get AI-powered review generation, a branded QR code, and private feedback management — instantly.
+            </p>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:20px;">
+            <div style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;">What you get</div>
+            <ul style="color:rgba(255,255,255,0.7);font-size:13px;display:flex;flex-direction:column;gap:8px;list-style:none;padding:0;margin:0;">
+                <li style="display:flex;gap:8px;align-items:center;"><span style="color:var(--teal-500);">✓</span> AI-generated review drafts</li>
+                <li style="display:flex;gap:8px;align-items:center;"><span style="color:var(--teal-500);">✓</span> Branded QR code for table/counter</li>
+                <li style="display:flex;gap:8px;align-items:center;"><span style="color:var(--teal-500);">✓</span> Private negative feedback capture</li>
+                <li style="display:flex;gap:8px;align-items:center;"><span style="color:var(--teal-500);">✓</span> Reputation analytics dashboard</li>
+            </ul>
+        </div>
+        <div style="color:rgba(255,255,255,0.2);font-size:11px;">
+            &copy; 2026 Digital Byte Solutions. All rights reserved.
+        </div>
+    </div>
+
+    <!-- Right White Panel -->
+    <div class="auth-right" style="align-items:flex-start;overflow-y:auto;padding:40px;">
+        <div style="width:100%;max-width:480px;margin:0 auto;">
+            <div style="margin-bottom:28px;">
+                <h2 style="font-size:22px;font-weight:800;color:var(--slate-900);letter-spacing:-0.02em;margin:0 0 6px;">Register Your Business</h2>
+                <p style="font-size:13px;color:var(--slate-500);margin:0;">Fill in the details below to onboard your business profile.</p>
+            </div>
+
+            <form action="/register" method="POST" style="display:flex;flex-direction:column;gap:18px;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <!-- Business Name -->
+                <div>
+                    <label class="form-label" for="reg-biz-name">Business Name *</label>
+                    <input type="text" id="reg-biz-name" name="business_name" required placeholder="e.g. The Grand Café" class="input-field">
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label class="form-label" for="reg-category">Business Category *</label>
+                    <div style="position:relative;">
+                        <select id="reg-category" name="business_category" required class="input-field" style="appearance:none;">
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="Restaurant">Restaurant</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Salon">Salon / Spa</option>
+                            <option value="Automobile">Automobile</option>
+                            <option value="Hospitality">Hospitality</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <svg style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                </div>
+
+                <!-- Custom Category -->
+                <div id="custom-category-box" style="display:none;">
+                    <label class="form-label" for="reg-custom-cat">Custom Category Name</label>
+                    <input type="text" id="reg-custom-cat" name="custom_category" placeholder="e.g. Juice Bar" class="input-field">
+                </div>
+
+                <!-- Google Place ID -->
+                <div>
+                    <label class="form-label" for="reg-place-id">Google Place ID *</label>
+                    <input type="text" id="reg-place-id" name="place_id" required placeholder="ChIJ..." class="input-field">
+                    <p style="font-size:11px;color:var(--slate-400);margin-top:5px;">Find it at <a href="https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder" target="_blank" style="color:var(--teal-600);">Google Place ID Finder</a></p>
+                </div>
+
+                <!-- Rating Threshold -->
+                <div>
+                    <label class="form-label" for="reg-threshold">Sentiment Threshold (redirect stars)</label>
+                    <div style="position:relative;">
+                        <select id="reg-threshold" name="sentiment_threshold" class="input-field" style="appearance:none;">
+                            <option value="4.0" selected>4.0 ★ (Recommended)</option>
+                            <option value="3.0">3.0 ★</option>
+                            <option value="5.0">5.0 ★</option>
+                        </select>
+                        <svg style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <p style="font-size:11px;color:var(--slate-400);margin-top:5px;">Ratings at or above this threshold redirect to Google Maps. Below goes to private feedback.</p>
+                </div>
+
+                <!-- Contact Info -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <div>
+                        <label class="form-label" for="reg-primary-alert">Primary Contact (Phone / Email) *</label>
+                        <input type="text" id="reg-primary-alert" name="primary_alert" required placeholder="9876543210" class="input-field">
+                    </div>
+                    <div>
+                        <label class="form-label" for="reg-primary-email">Owner Email (for credentials)</label>
+                        <input type="email" id="reg-primary-email" name="primary_email" placeholder="owner@company.com" class="input-field">
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <div>
+                        <label class="form-label" for="reg-alt-alert">Alternate Phone (optional)</label>
+                        <input type="text" id="reg-alt-alert" name="alternate_alert" placeholder="Alternate number" class="input-field">
+                    </div>
+                    <div>
+                        <label class="form-label" for="reg-alt-email">Alternate Email (optional)</label>
+                        <input type="email" id="reg-alt-email" name="alternate_email" placeholder="alt@company.com" class="input-field">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:13px 20px;font-size:14px;margin-top:8px;">
+                    Register Business
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </form>
+
+            <div style="margin-top:24px;text-align:center;">
+                <a href="/" style="font-size:13px;color:var(--slate-500);text-decoration:none;">Already registered? Sign in &rarr;</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('reg-category').addEventListener('change', function() {
+        document.getElementById('custom-category-box').style.display = this.value === 'Other' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
+{% block footer %}{% endblock %}
